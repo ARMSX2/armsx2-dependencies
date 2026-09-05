@@ -7,36 +7,36 @@ on:
 
 jobs:
   create-release:
-    runs-on: windows-2025-vs2026
+    runs-on: windows-11-vs2026-arm
     steps:
     - name: Checkout main repo
       uses: actions/checkout@v7
       with:
-        repository: "PCSX2/pcsx2"
+        repository: "ARMSX2/ARMSX2"
         fetch-depth: 0
         submodules: false
 
     - name: Checkout deps repo
       uses: actions/checkout@v7
       with:
-        repository: "PCSX2/pcsx2-windows-dependencies"
+        repository: "ARMSX2/armsx2-dependencies"
         path: deps-repo
         
     - name: Build Dependencies
       shell: cmd
       run: |
-        call .github\workflows\scripts\windows\build-dependencies.bat
+        call .github\workflows\scripts\windows\build-dependencies-arm64.bat
 
     - name: Create Dependencies Archive
       shell: cmd
       run: |
-        "C:\Program Files\7-Zip\7z.exe" a pcsx2-windows-dependencies.7z .\deps
+        "C:\Program Files\7-Zip\7z.exe" a armsx2-windows-arm64-dependencies.7z .\deps-arm64
 
     - name: Create Release
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        $RELEASE="latest-windows-dependencies"
+        $RELEASE="latest-windows-arm64-dependencies"
 
         cd deps-repo
         git push origin --delete $RELEASE || $true
@@ -45,4 +45,4 @@ jobs:
         git push origin tag $RELEASE --force
 
         gh release create $RELEASE --latest --title "Latest Dependencies Build"
-        gh release upload $RELEASE ../pcsx2-windows-dependencies.7z
+        gh release upload $RELEASE ../armsx2-windows-arm64-dependencies.7z
