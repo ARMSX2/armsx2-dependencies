@@ -5,6 +5,9 @@ on:
   repository_dispatch:
     types: [deps-update]
 
+permissions:
+  contents: write           # force-move the release tag, and recreate the release
+
 jobs:
   create-release:
     runs-on: windows-11-vs2026-arm
